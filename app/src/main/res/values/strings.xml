@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MusicScoreReader</string>
+
+    <string name="capture_button_alt">Capture</string>
 </resources>
