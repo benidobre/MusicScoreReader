@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.hardware.display.DisplayManager
@@ -222,6 +223,8 @@ class CameraFragment : Fragment() {
 
                         // Extract image data from callback object
                         val data = buffer.toByteArray()
+
+                        val bitmp = BitmapFactory.decodeByteArray(data, 0, data.size)
 
                         // Convert the data into an array of pixel values ranging 0-255
                         val pixels = data.map { it.toInt() and 0xFF }
