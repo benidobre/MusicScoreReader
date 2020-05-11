@@ -1,21 +1,15 @@
 package com.example.musicscorereader
 
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.hardware.display.DisplayManager
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,20 +19,17 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.Navigation
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import org.opencv.android.Utils
+import org.opencv.core.CvType
+import org.opencv.core.Mat
+import org.opencv.imgproc.Imgproc
 import java.io.File
 import java.nio.ByteBuffer
-import java.text.SimpleDateFormat
-import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import kotlin.collections.ArrayList
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -224,7 +215,36 @@ class CameraFragment : Fragment() {
                         // Extract image data from callback object
                         val data = buffer.toByteArray()
 
-                        val bitmp = BitmapFactory.decodeByteArray(data, 0, data.size)
+                        val bitmap = BitmapFactory.decodeByteArray(data, 0, data.size)
+
+                        val tmp = Mat(bitmap.width, bitmap.height, CvType.CV_8UC1)
+                        // Convert
+                        // Convert
+                        Utils.bitmapToMat(bitmap, tmp)
+
+                        val gray = Mat(bitmap.width, bitmap.height, CvType.CV_8UC1)
+                        // Conver the color
+                        // Conver the color
+                        Imgproc.cvtColor(tmp, gray, Imgproc.COLOR_RGB2GRAY)
+                        // Convert back to bitmap
+
+
+                        // Convert back to bitmap
+                        val destination = Mat(gray.rows(), gray.cols(), gray.type())
+
+                        Imgproc.threshold(
+                            gray,
+                            destination,
+                            0.0,
+                            255.0,
+                            Imgproc.THRESH_OTSU or Imgproc.THRESH_BINARY
+                        )
+//                        Imgproc.adaptiveThreshold(
+//                            gray, destination, 255.0,
+//                            Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY_INV, 15, 4.0
+//                        )
+
+                        Utils.matToBitmap(destination, bitmap)
 
                         // Convert the data into an array of pixel values ranging 0-255
                         val pixels = data.map { it.toInt() and 0xFF }

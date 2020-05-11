@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.graphics.Matrix
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.util.Size
 import android.view.Surface
 import android.view.TextureView
@@ -17,6 +18,7 @@ import androidx.camera.core.Preview
 import androidx.camera.core.impl.PreviewConfig
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import org.opencv.android.OpenCVLoader
 import java.util.concurrent.Executors
 
 private const val REQUEST_CODE_PERMISSIONS = 10
@@ -32,12 +34,14 @@ const val FLAGS_FULLSCREEN =
             View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
 
 class MainActivity : AppCompatActivity() {
+
     private lateinit var container: FrameLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         container = findViewById(R.id.fragment_container)
+        Log.d("verify",(OpenCVLoader.initDebug()).toString());
     }
 
     override fun onResume() {
