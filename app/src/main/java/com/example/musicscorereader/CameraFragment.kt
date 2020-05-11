@@ -135,6 +135,7 @@ class CameraFragment : Fragment() {
                 .build()
 
             // ImageCapture
+            //TODO test with opposite of MINIMIZE latency
             imageCapture = ImageCapture.Builder()
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 // We request aspect ratio but no resolution to match preview config, but letting
@@ -232,20 +233,39 @@ class CameraFragment : Fragment() {
                         // Convert back to bitmap
                         val destination = Mat(gray.rows(), gray.cols(), gray.type())
 
-                        Imgproc.threshold(
-                            gray,
-                            destination,
-                            0.0,
-                            255.0,
-                            Imgproc.THRESH_OTSU or Imgproc.THRESH_BINARY
-                        )
-//                        Imgproc.adaptiveThreshold(
-//                            gray, destination, 255.0,
-//                            Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY_INV, 15, 4.0
+                        //otsu threshold
+//                        Imgproc.threshold(
+//                            gray,
+//                            destination,
+//                            0.0,
+//                            255.0,
+//                            Imgproc.THRESH_OTSU or Imgproc.THRESH_BINARY
 //                        )
+
+                        //TODO test with different thresh values
+                        Imgproc.threshold(gray, destination, 122.0, 255.0,Imgproc.THRESH_BINARY)
+
 
                         Utils.matToBitmap(destination, bitmap)
 
+                        val colour = bitmap.getPixel(100, 200)
+                        val height = bitmap.height-1
+                        val width = bitmap.width-1
+                        val proj = arrayListOf<Int>()
+                        for (i in 0..width) {
+                            var sum = 0
+                            for (j in 0..height)
+                                //pixel is black
+                                if (Color.red(bitmap.getPixel(i,j)) == 0)
+                                    ++sum
+                            proj.add(sum)
+                        }
+
+                        val red = Color.red(colour)
+                        val blue = Color.blue(colour)
+                        val green = Color.green(colour)
+                        val alpha = Color.alpha(colour)
+                        //black 0, 255 white
                         // Convert the data into an array of pixel values ranging 0-255
                         val pixels = data.map { it.toInt() and 0xFF }
 
